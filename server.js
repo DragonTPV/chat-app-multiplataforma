@@ -3,7 +3,11 @@ const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
-const db = require('./database');
+
+// Usar PostgreSQL en producción, SQLite en desarrollo
+const db = process.env.NODE_ENV === 'production' 
+  ? require('./database-pg') 
+  : require('./database');
 
 const app = express();
 const server = http.createServer(app);
