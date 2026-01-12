@@ -2,8 +2,8 @@ const { Pool } = require('pg');
 
 // Configuración para producción (Railway/Render) o desarrollo local
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://localhost/chat',
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  connectionString: process.env.DATABASE_URL || 'postgresql://chat_db_3tme_user:MQrcqJxAIjYFX2Y40ntn3aY6XADDW4ha@dpg-d5ilr7dactks73e5v8pg-a/chat_db_3tme',
+  ssl: (process.env.NODE_ENV === 'production' || !process.env.DATABASE_URL) ? { rejectUnauthorized: false } : false
 });
 
 // Inicializar base de datos
