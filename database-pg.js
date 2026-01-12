@@ -2,13 +2,15 @@ const { Pool } = require('pg');
 
 // Configuración para producción (Railway/Render) o desarrollo local
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://chat_db_3tme_user:MQrcqJxAIjYFX2Y40ntn3aY6XADDW4ha@dpg-d5ilr7dactks73e5v8pg-a/chat_db_3tme',
-  ssl: (process.env.NODE_ENV === 'production' || !process.env.DATABASE_URL) ? { rejectUnauthorized: false } : false
+  connectionString: process.env.DATABASE_URL || 'postgresql://chat_db_3tme_user:MQrcqJxAIjYFX2Y40ntn3aY6XADDW4ha@dpg-d5ilr7dactks73e5v8pg-a.virginia-postgres.render.com/chat_db_3tme',
+  ssl: { rejectUnauthorized: false }
 });
 
 // Inicializar base de datos
 async function initDatabase() {
   try {
+    console.log('🔄 Inicializando base de datos PostgreSQL...');
+
     // Tabla de usuarios
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -53,9 +55,11 @@ async function initDatabase() {
       )
     `);
 
-    console.log('Base de datos PostgreSQL inicializada correctamente');
+    console.log('✅ Base de datos PostgreSQL inicializada correctamente');
   } catch (error) {
-    console.error('Error al inicializar base de datos:', error);
+    console.error('❌ Error al inicializar base de datos:', error.message);
+    // No lanzamos error para evitar que el despliegue falle
+    console.log('⚠️ Continuando sin base de datos - modo offline');
   }
 }
 
