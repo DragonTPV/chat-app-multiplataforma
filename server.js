@@ -300,6 +300,11 @@ app.get('/auto-users.html', (req, res) => {
   res.sendFile(__dirname + '/auto-users.html');
 });
 
+// Ruta para favicon (evitar error 404)
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
+});
+
 // Ruta para obtener información de salas
 app.get('/rooms', (req, res) => {
   const roomInfo = Object.keys(rooms).map(roomName => ({
