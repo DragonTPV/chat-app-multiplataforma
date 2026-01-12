@@ -41,25 +41,33 @@ io.on('connection', (socket) => {
   // Usuario se une a una sala
   socket.on('join-room', async (data) => {
     const { username, roomName, email } = data;
+    
+    console.log('🔍 Usuario intentando unirse:', { username, roomName, email, socketId: socket.id });
 
     try {
       // Verificar límite de conexiones
       if (Object.keys(users).length >= MAX_CONNECTIONS) {
+        console.log('❌ Servidor lleno');
         socket.emit('join-error', { message: 'Servidor lleno, intenta más tarde' });
         return;
       }
 
       // Verificar nombre de usuario único en sesión actual
       if (connectedUsernames.has(username)) {
+        console.log('❌ Nombre de usuario ya en uso:', username);
         socket.emit('join-error', { message: 'Nombre de usuario ya en uso' });
         return;
       }
 
+      console.log('✅ Validaciones pasadas, creando usuario en BD...');
+
       // Crear o actualizar usuario en base de datos
       await db.createOrUpdateUser(username, email);
+      console.log('✅ Usuario creado/actualizado en BD');
 
       // Crear sala si no existe en base de datos
       await db.createRoom(roomName, username);
+      console.log('✅ Sala verificada en BD');
 
       // Crear sala si no existe en memoria
       if (!rooms[roomName]) {
@@ -85,16 +93,11 @@ io.on('connection', (socket) => {
       // Obtener usuarios online de la base de datos
       const onlineUsers = await db.getOnlineUsers();
       const onlineUsernames = onlineUsers.map(u => u.username);
-
-      // Notificar a todos en la sala
-      socket.to(roomName).emit('user-joined', {
-        username,
-        message: `${username} se unió al chat`,
-        allUsers: onlineUsernames
-      });
+      console.log('✅ Usuarios online obtenidos:', onlineUsernames);
 
       // Obtener historial de mensajes de la base de datos
       const messageHistory = await db.getPublicMessages(roomName);
+      console.log('✅ Historial de mensajes obtenido:', messageHistory.length, 'mensajes');
 
       // Enviar historial y lista de usuarios al usuario nuevo
       socket.emit('room-joined', {
@@ -104,10 +107,10 @@ io.on('connection', (socket) => {
         allUsers: onlineUsernames
       });
 
-      console.log(`${username} se unió a la sala: ${roomName}`);
+      console.log(`✅ ${username} se unió a la sala: ${roomName}`);
     } catch (error) {
-      console.error('Error al unirse a la sala:', error);
-      socket.emit('join-error', { message: 'Error al conectar al servidor' });
+      console.error('❌ Error al unirse a la sala:', error);
+      socket.emit('join-error', { message: 'Error al conectar al servidor: ' + error.message });
     }
   });
 
