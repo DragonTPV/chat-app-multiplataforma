@@ -1,8 +1,12 @@
 const { Pool } = require('pg');
 
 // Configuración para producción (Railway/Render) o desarrollo local
+const connectionString = process.env.DATABASE_URL || 'postgresql://chat_db_3tme_user:MQrcqJxAIjYFX2Y40ntn3aY6XADDW4ha@dpg-d5ilr7dactks73e5v8pg-a.virginia-postgres.render.com/chat_db_3tme';
+console.log('🔗 DATABASE_URL:', connectionString);
+console.log('🌍 NODE_ENV:', process.env.NODE_ENV || 'development');
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://chat_db_3tme_user:MQrcqJxAIjYFX2Y40ntn3aY6XADDW4ha@dpg-d5ilr7dactks73e5v8pg-a.virginia-postgres.render.com/chat_db_3tme',
+  connectionString,
   ssl: { rejectUnauthorized: false }
 });
 
