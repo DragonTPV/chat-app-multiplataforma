@@ -367,6 +367,18 @@
                 forceNew: true
             });
 
+            // Evento: conexión exitosa
+            socket.on('connect', () => {
+                console.log('✅ Conectado al servidor:', socket.id);
+                displaySystemMessage('Conectado al servidor de chat');
+            });
+
+            // Evento: error de conexión
+            socket.on('connect_error', (error) => {
+                console.error('❌ Error de conexión:', error);
+                displaySystemMessage('Error al conectar al servidor. Intenta recargar la página.');
+            });
+
             // Evento: usuario se une a la sala
             socket.on('room-joined', (data) => {
                 console.log('Unido a la sala:', data);
