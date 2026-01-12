@@ -437,14 +437,21 @@
 
             // Evento: error al unirse
             socket.on('join-error', (data) => {
+                console.error('❌ Error al unirse a la sala:', data.message);
                 alert(data.message);
                 loginSection.style.display = 'block';
                 chatSection.style.display = 'none';
+            });
+
+            // Evento: debug para join-room
+            socket.on('debug', (data) => {
+                console.log('🔍 Debug:', data);
             });
         }
 
         // Función para unirse a una sala
         function joinRoom(username, roomName, email = null) {
+            console.log('🔍 Intentando unirse a sala:', { username, roomName, email });
             currentUsername = username;
             currentRoom = roomName;
 
@@ -453,7 +460,7 @@
                 roomName: roomName,
                 email: email
             });
-
+            console.log('📤 Evento join-room emitido');
             loginSection.style.display = 'none';
             chatSection.style.display = 'flex';
         }
