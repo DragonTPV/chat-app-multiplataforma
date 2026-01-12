@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador Automático de Usuarios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #5a67d8;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e8f5e8;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+        }
+        .user-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .user-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+        .user-card.active {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Generador Automático de Usuarios</h1>
+        <p>Esta herramienta crea automáticamente múltiples usuarios para probar el chat privado.</p>
+        
+        <div>
+            <button onclick="createUsers(3)">Crear 3 Usuarios</button>
+            <button onclick="createUsers(5)">Crear 5 Usuarios</button>
+            <button onclick="createUsers(10)">Crear 10 Usuarios</button>
+            <button onclick="removeAllUsers()">Eliminar Todos</button>
+        </div>
+
+        <div id="status" class="status">
+            Estado: Listo para crear usuarios
+        </div>
+
+        <div id="user-list" class="user-list"></div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        let users = [];
+        let userCounter = 0;
+
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = message;
+        }
+
+        function updateUserList() {
+            const userListDiv = document.getElementById('user-list');
+            userListDiv.innerHTML = '';
+            
+            users.forEach((user, index) => {
+                const card = document.createElement('div');
+                card.className = `user-card ${user.connected ? 'active' : ''}`;
+                card.innerHTML = `
+                    <strong>${user.username}</strong><br>
+                    <small>Estado: ${user.connected ? 'Conectado' : 'Desconectado'}</small><br>
+                    <small>Sala: ${user.room}</small>
+                `;
+                userListDiv.appendChild(card);
+            });
+        }
+
+        function createUsers(count) {
+            updateStatus(`Creando ${count} usuarios...`);
+            
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    createUser();
+                }, i * 500); // Crear usuarios con 500ms de diferencia
+            }
+        }
+
+        function createUser() {
+            userCounter++;
+            const username = `Bot${userCounter}`;
+            const room = 'sala-general';
+            
+            const user = {
+                id: userCounter,
+                username: username,
+                room: room,
+                socket: null,
+                connected: false
+            };
+
+            users.push(user);
+            
+            // Conectar usuario
+            user.socket = io();
+            
+            user.socket.on('connect', () => {
+                user.connected = true;
+                user.socket.emit('join-room', {
+                    username: username,
+                    roomName: room
+                });
+                updateStatus(`Usuario ${username} conectado`);
+                updateUserList();
+            });
+
+            user.socket.on('room-joined', (data) => {
+                console.log(`${username} se unió a la sala`, data);
+            });
+
+            user.socket.on('user-joined', (data) => {
+                console.log(`${username} ve que ${data.username} se unió`);
+            });
+
+            user.socket.on('user-left', (data) => {
+                console.log(`${username} ve que ${data.username} abandonó`);
+            });
+
+            user.socket.on('disconnect', () => {
+                user.connected = false;
+                updateStatus(`Usuario ${username} desconectado`);
+                updateUserList();
+            });
+
+            updateUserList();
+        }
+
+        function removeAllUsers() {
+            updateStatus('Eliminando todos los usuarios...');
+            
+            users.forEach(user => {
+                if (user.socket && user.connected) {
+                    user.socket.disconnect();
+                }
+            });
+            
+            users = [];
+            updateUserList();
+            updateStatus('Todos los usuarios eliminados');
+        }
+
+        // Enviar mensajes aleatorios entre usuarios
+        function sendRandomMessages() {
+            const connectedUsers = users.filter(u => u.connected);
+            
+            if (connectedUsers.length < 2) return;
+            
+            // Enviar mensaje público
+            const sender = connectedUsers[Math.floor(Math.random() * connectedUsers.length)];
+            const messages = [
+                'Hola a todos!',
+                '¿Cómo están?',
+                'Buen día!',
+                'Chat funcionando bien',
+                'Mensaje de prueba'
+            ];
+            
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            
+            sender.socket.emit('chat-message', {
+                message: randomMessage,
+                roomName: sender.room
+            });
+            
+            console.log(`${sender.username} envió: ${randomMessage}`);
+        }
+
+        // Enviar mensajes privados aleatorios
+        function sendRandomPrivateMessages() {
+            const connectedUsers = users.filter(u => u.connected);
+            
+            if (connectedUsers.length < 2) return;
+            
+            const sender = connectedUsers[Math.floor(Math.random() * connectedUsers.length)];
+            const receiver = connectedUsers.filter(u => u !== sender)[Math.floor(Math.random() * (connectedUsers.length - 1))];
+            
+            const messages = [
+                'Hola en privado',
+                '¿Me escuchas?',
+                'Mensaje secreto',
+                'Chat privado funcionando'
+            ];
+            
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            
+            sender.socket.emit('private-message', {
+                message: randomMessage,
+                targetUsername: receiver.username
+            });
+            
+            console.log(`${sender.username} envió privado a ${receiver.username}: ${randomMessage}`);
+        }
+
+        // Enviar mensajes automáticamente cada 5 segundos
+        setInterval(() => {
+            if (Math.random() > 0.5) {
+                sendRandomMessages();
+            }
+            if (Math.random() > 0.7) {
+                sendRandomPrivateMessages();
+            }
+        }, 5000);
+
+        // Inicializar
+        updateStatus('Sistema listo. Haz clic en los botones para crear usuarios.');
+    </script>
+</body>
+</html>

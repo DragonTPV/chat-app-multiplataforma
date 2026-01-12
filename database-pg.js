@@ -1,0 +1,184 @@
+const { Pool } = require('pg');
+
+// Configuración para producción (Railway/Render) o desarrollo local
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || 'postgresql://localhost/chat',
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
+
+// Inicializar base de datos
+async function initDatabase() {
+  try {
+    // Tabla de usuarios
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        is_online INTEGER DEFAULT 0
+      )
+    `);
+
+    // Tabla de salas
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS rooms (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) UNIQUE NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_by VARCHAR(255)
+      )
+    `);
+
+    // Tabla de mensajes públicos
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS messages (
+        id SERIAL PRIMARY KEY,
+        room_name VARCHAR(255) NOT NULL,
+        username VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Tabla de mensajes privados
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS private_messages (
+        id SERIAL PRIMARY KEY,
+        sender_username VARCHAR(255) NOT NULL,
+        receiver_username VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    console.log('Base de datos PostgreSQL inicializada correctamente');
+  } catch (error) {
+    console.error('Error al inicializar base de datos:', error);
+  }
+}
+
+// Inicializar al iniciar
+initDatabase();
+
+// Funciones de base de datos
+module.exports = {
+  // Crear o actualizar usuario
+  createOrUpdateUser: async (username, email = null) => {
+    try {
+      const result = await pool.query(
+        `INSERT INTO users (username, email, last_seen, is_online)
+         VALUES ($1, $2, CURRENT_TIMESTAMP, 1)
+         ON CONFLICT (username) 
+         DO UPDATE SET email = $2, last_seen = CURRENT_TIMESTAMP, is_online = 1
+         RETURNING id, username`,
+        [username, email]
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Marcar usuario como desconectado
+  markUserOffline: async (username) => {
+    try {
+      const result = await pool.query(
+        'UPDATE users SET is_online = 0 WHERE username = $1',
+        [username]
+      );
+      return result.rowCount;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Obtener usuarios online
+  getOnlineUsers: async () => {
+    try {
+      const result = await pool.query(
+        'SELECT username, email, last_seen FROM users WHERE is_online = 1'
+      );
+      return result.rows;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Crear sala si no existe
+  createRoom: async (roomName, createdBy) => {
+    try {
+      const result = await pool.query(
+        `INSERT INTO rooms (name, created_by)
+         VALUES ($1, $2)
+         ON CONFLICT (name) DO NOTHING
+         RETURNING id, name`,
+        [roomName, createdBy]
+      );
+      return result.rows[0] || { id: null, name: roomName };
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Guardar mensaje público
+  savePublicMessage: async (roomName, username, message) => {
+    try {
+      const result = await pool.query(
+        'INSERT INTO messages (room_name, username, message) VALUES ($1, $2, $3) RETURNING id',
+        [roomName, username, message]
+      );
+      return { id: result.rows[0].id };
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Guardar mensaje privado
+  savePrivateMessage: async (sender, receiver, message) => {
+    try {
+      const result = await pool.query(
+        'INSERT INTO private_messages (sender_username, receiver_username, message) VALUES ($1, $2, $3) RETURNING id',
+        [sender, receiver, message]
+      );
+      return { id: result.rows[0].id };
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Obtener historial de mensajes públicos
+  getPublicMessages: async (roomName, limit = 100) => {
+    try {
+      const result = await pool.query(
+        'SELECT * FROM messages WHERE room_name = $1 ORDER BY timestamp DESC LIMIT $2',
+        [roomName, limit]
+      );
+      return result.rows.reverse();
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Obtener historial de mensajes privados
+  getPrivateMessages: async (user1, user2, limit = 100) => {
+    try {
+      const result = await pool.query(
+        `SELECT * FROM private_messages 
+         WHERE (sender_username = $1 AND receiver_username = $2) 
+            OR (sender_username = $2 AND receiver_username = $1)
+         ORDER BY timestamp DESC LIMIT $3`,
+        [user1, user2, limit]
+      );
+      return result.rows.reverse();
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Cerrar conexión
+  close: async () => {
+    await pool.end();
+  }
+};
