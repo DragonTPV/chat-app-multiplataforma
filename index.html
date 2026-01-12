@@ -359,8 +359,8 @@
 
         // Función para conectar al servidor
         function connectToServer() {
-            // Conectar al servidor de Render
-            socket = io('https://chat-app-multiplataforma.onrender.com');
+            // Conectar automáticamente al servidor actual
+            socket = io();
 
             // Evento: usuario se une a la sala
             socket.on('room-joined', (data) => {
