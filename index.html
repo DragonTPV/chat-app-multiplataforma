@@ -714,9 +714,43 @@
             dbStatus.style.border = '1px solid #dee2e6';
             dbStatus.textContent = '🔄 Verificando conexión a base de datos...';
 
+            // Configurar timeout para la petición
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
+
             try {
-                const response = await fetch('/test-db');
-                const data = await response.json();
+                console.log('🔍 Iniciando verificación de base de datos...');
+
+                const response = await fetch('/test-db', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    },
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                // Verificar código de estado HTTP
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                // Intentar parsear JSON
+                let data;
+                try {
+                    data = await response.json();
+                } catch (parseError) {
+                    throw new Error('Respuesta del servidor no es JSON válido');
+                }
+
+                console.log('📊 Respuesta del servidor:', data);
+
+                // Verificar estructura de respuesta
+                if (!data || typeof data.status === 'undefined') {
+                    throw new Error('Respuesta del servidor incompleta');
+                }
 
                 if (data.status === 'success') {
                     dbStatus.style.background = '#d4edda';
@@ -724,26 +758,65 @@
                     dbStatus.style.color = '#155724';
                     dbStatus.innerHTML = `
                         ✅ <strong>Conexión exitosa</strong><br>
-                        🕒 Hora del servidor: ${new Date(data.data.current_time).toLocaleString()}<br>
-                        👥 Usuarios registrados: ${data.data.total_users}
+                        🕒 Hora del servidor: ${data.data?.current_time ? new Date(data.data.current_time).toLocaleString() : 'N/A'}<br>
+                        👥 Usuarios registrados: ${data.data?.total_users ?? 'N/A'}<br>
+                        📡 Estado: Base de datos operativa
                     `;
+                    console.log('✅ Verificación exitosa');
                 } else {
-                    dbStatus.style.background = '#f8d7da';
-                    dbStatus.style.border = '1px solid #f5c6cb';
-                    dbStatus.style.color = '#721c24';
-                    dbStatus.innerHTML = `
-                        ❌ <strong>Error de conexión</strong><br>
-                        ${data.message}
-                    `;
+                    throw new Error(data.message || 'Error desconocido en la respuesta del servidor');
                 }
+
             } catch (error) {
+                clearTimeout(timeoutId);
+                console.error('❌ Error en verificación de BD:', error);
+
+                let errorMessage = '';
+                let errorDetails = '';
+
+                // Clasificar tipos de error
+                if (error.name === 'AbortError') {
+                    errorMessage = 'Timeout: La petición tardó demasiado tiempo';
+                    errorDetails = 'El servidor no respondió en 10 segundos';
+                } else if (error.message.includes('fetch')) {
+                    errorMessage = 'Error de conexión';
+                    errorDetails = 'No se pudo conectar al servidor';
+                } else if (error.message.includes('HTTP')) {
+                    errorMessage = 'Error del servidor';
+                    errorDetails = error.message;
+                } else if (error.message.includes('JSON')) {
+                    errorMessage = 'Error de formato';
+                    errorDetails = 'La respuesta del servidor no es válida';
+                } else {
+                    errorMessage = 'Error de base de datos';
+                    errorDetails = error.message;
+                }
+
                 dbStatus.style.background = '#f8d7da';
                 dbStatus.style.border = '1px solid #f5c6cb';
                 dbStatus.style.color = '#721c24';
                 dbStatus.innerHTML = `
-                    ❌ <strong>Error de conexión</strong><br>
-                    No se pudo conectar al servidor: ${error.message}
+                    ❌ <strong>${errorMessage}</strong><br>
+                    <small>${errorDetails}</small><br>
+                    💡 <em>Sugerencia: Verifica tu conexión a internet o intenta nuevamente</em>
                 `;
+
+                // Agregar botón de reintento
+                const retryBtn = document.createElement('button');
+                retryBtn.textContent = 'Reintentar';
+                retryBtn.style.marginTop = '5px';
+                retryBtn.style.padding = '5px 10px';
+                retryBtn.style.background = '#6c757d';
+                retryBtn.style.color = 'white';
+                retryBtn.style.border = 'none';
+                retryBtn.style.borderRadius = '3px';
+                retryBtn.style.cursor = 'pointer';
+                retryBtn.onclick = () => {
+                    testDbBtn.click();
+                    retryBtn.remove();
+                };
+                dbStatus.appendChild(retryBtn);
+
             } finally {
                 testDbBtn.disabled = false;
                 testDbBtn.textContent = 'Verificar Base de Datos';
