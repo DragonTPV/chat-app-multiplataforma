@@ -272,6 +272,8 @@
             <input type="email" id="email-input" placeholder="Tu email (opcional)">
             <input type="text" id="room-input" placeholder="Nombre de la sala" value="sala-general" required>
             <button id="join-btn">Unirse al Chat</button>
+            <button id="test-db-btn" style="margin-top: 10px; background: #17a2b8; color: white; border: none; padding: 10px 15px; border-radius: 20px; cursor: pointer;">Verificar Base de Datos</button>
+            <div id="db-status" style="margin-top: 10px; padding: 10px; border-radius: 5px; display: none;"></div>
         </div>
 
         <!-- Sección del Chat -->
@@ -333,12 +335,8 @@
         const emailInput = document.getElementById('email-input');
         const roomInput = document.getElementById('room-input');
         const joinBtn = document.getElementById('join-btn');
-        const leaveBtn = document.getElementById('leave-btn');
-        const messagesDiv = document.getElementById('messages');
-        const messageInput = document.getElementById('message-input');
-        const sendBtn = document.getElementById('send-btn');
-        const roomNameDiv = document.getElementById('room-name');
-        const usersCountDiv = document.getElementById('users-count');
+        const testDbBtn = document.getElementById('test-db-btn');
+        const dbStatus = document.getElementById('db-status');
 
         // Nuevos elementos para chat privado
         const chatTypeSelect = document.getElementById('chat-type');
@@ -707,8 +705,52 @@
             }
         });
 
+        // Event listener para probar conexión a BD
+        testDbBtn.addEventListener('click', async () => {
+            testDbBtn.disabled = true;
+            testDbBtn.textContent = 'Verificando...';
+            dbStatus.style.display = 'block';
+            dbStatus.style.background = '#f8f9fa';
+            dbStatus.style.border = '1px solid #dee2e6';
+            dbStatus.textContent = '🔄 Verificando conexión a base de datos...';
+
+            try {
+                const response = await fetch('/test-db');
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    dbStatus.style.background = '#d4edda';
+                    dbStatus.style.border = '1px solid #c3e6cb';
+                    dbStatus.style.color = '#155724';
+                    dbStatus.innerHTML = `
+                        ✅ <strong>Conexión exitosa</strong><br>
+                        🕒 Hora del servidor: ${new Date(data.data.current_time).toLocaleString()}<br>
+                        👥 Usuarios registrados: ${data.data.total_users}
+                    `;
+                } else {
+                    dbStatus.style.background = '#f8d7da';
+                    dbStatus.style.border = '1px solid #f5c6cb';
+                    dbStatus.style.color = '#721c24';
+                    dbStatus.innerHTML = `
+                        ❌ <strong>Error de conexión</strong><br>
+                        ${data.message}
+                    `;
+                }
+            } catch (error) {
+                dbStatus.style.background = '#f8d7da';
+                dbStatus.style.border = '1px solid #f5c6cb';
+                dbStatus.style.color = '#721c24';
+                dbStatus.innerHTML = `
+                    ❌ <strong>Error de conexión</strong><br>
+                    No se pudo conectar al servidor: ${error.message}
+                `;
+            } finally {
+                testDbBtn.disabled = false;
+                testDbBtn.textContent = 'Verificar Base de Datos';
+            }
+        });
+
         // Conectar automáticamente al cargar la página
-        connectToServer();
     </script>
 </body>
 </html>

@@ -310,15 +310,28 @@ app.get('/favicon.ico', (req, res) => {
   res.status(204).end();
 });
 
-// Ruta para obtener información de salas
-app.get('/rooms', (req, res) => {
-  const roomInfo = Object.keys(rooms).map(roomName => ({
-    name: roomName,
-    users: rooms[roomName].users.length,
-    messages: rooms[roomName].messages.length
-  }));
+// Ruta para verificar conexión a base de datos
+app.get('/test-db', async (req, res) => {
+  try {
+    // Probar conexión con una consulta simple
+    const result = await db.pool.query('SELECT NOW() as current_time, COUNT(*) as total_users FROM users');
 
-  res.json(roomInfo);
+    res.json({
+      status: 'success',
+      message: 'Conexión a base de datos exitosa',
+      data: {
+        current_time: result.rows[0].current_time,
+        total_users: parseInt(result.rows[0].total_users)
+      }
+    });
+  } catch (error) {
+    console.error('Error al verificar BD:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Error de conexión a base de datos',
+      error: error.message
+    });
+  }
 });
 
 const PORT = process.env.PORT || 3000;
