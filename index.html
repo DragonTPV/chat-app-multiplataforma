@@ -359,8 +359,13 @@
 
         // Función para conectar al servidor
         function connectToServer() {
-            // Conectar automáticamente al servidor actual
-            socket = io();
+            // Conectar al servidor actual (automático)
+            const serverUrl = window.location.origin;
+            socket = io(serverUrl, {
+                transports: ['websocket', 'polling'],
+                timeout: 5000,
+                forceNew: true
+            });
 
             // Evento: usuario se une a la sala
             socket.on('room-joined', (data) => {
