@@ -59,29 +59,29 @@ io.on('connection', (socket) => {
         return;
       }
 
-      console.log('✅ Validaciones pasadas, creando usuario en BD...');
+      console.log('✅ Validaciones pasadas, intentando crear usuario en BD...');
 
-      // Crear o actualizar usuario en base de datos
-      await db.createOrUpdateUser(username, email);
-      console.log('✅ Usuario creado/actualizado en BD');
-
-      // Crear sala si no existe en base de datos
-      await db.createRoom(roomName, username);
-      console.log('✅ Sala verificada en BD');
-
-      // Crear sala si no existe en memoria
-      if (!rooms[roomName]) {
-        rooms[roomName] = {
-          id: uuidv4(),
-          name: roomName,
-          users: [],
-          messages: []
-        };
+      // Intentar crear usuario en base de datos (sin bloquear si falla)
+      try {
+        await db.createOrUpdateUser(username, email);
+        console.log('✅ Usuario creado/actualizado en BD');
+      } catch (dbError) {
+        console.log('⚠️ Error en BD, continuando en modo offline:', dbError.message);
+        // No lanzamos error, continuamos en modo offline
       }
 
-      // Agregar usuario a la sala
-      socket.join(roomName);
-      users[socket.id] = { username, roomName };
+      try {
+        await db.createRoom(roomName, username);
+        console.log('✅ Sala verificada en BD');
+      } catch (dbError) {
+        console.log('⚠️ Error en BD al crear sala, continuando en modo offline:', dbError.message);
+        // No lanzamos error, continuamos en modo offline
+      }
+
+      // Agregar usuario a la lista de la sala
+      if (!rooms[roomName]) {
+        rooms[roomName] = { users: [], messages: [] };
+      }
 
       // Agregar usuario a la lista de la sala
       if (!rooms[roomName].users.includes(username)) {
@@ -90,14 +90,33 @@ io.on('connection', (socket) => {
 
       connectedUsernames.add(username);
 
-      // Obtener usuarios online de la base de datos
-      const onlineUsers = await db.getOnlineUsers();
-      const onlineUsernames = onlineUsers.map(u => u.username);
-      console.log('✅ Usuarios online obtenidos:', onlineUsernames);
+      // Intentar obtener usuarios online de la base de datos (con fallback)
+      let onlineUsernames = [];
+      try {
+        const onlineUsers = await db.getOnlineUsers();
+        onlineUsernames = onlineUsers.map(u => u.username);
+        console.log('✅ Usuarios online obtenidos de BD:', onlineUsernames);
+      } catch (dbError) {
+        console.log('⚠️ Error obteniendo usuarios de BD, usando memoria:', dbError.message);
+        onlineUsernames = Array.from(connectedUsernames);
+      }
 
-      // Obtener historial de mensajes de la base de datos
-      const messageHistory = await db.getPublicMessages(roomName);
-      console.log('✅ Historial de mensajes obtenido:', messageHistory.length, 'mensajes');
+      // Intentar obtener historial de mensajes de la base de datos (con fallback)
+      let messageHistory = [];
+      try {
+        messageHistory = await db.getPublicMessages(roomName);
+        console.log('✅ Historial de mensajes obtenido de BD:', messageHistory.length, 'mensajes');
+      } catch (dbError) {
+        console.log('⚠️ Error obteniendo historial de BD, usando memoria:', dbError.message);
+        messageHistory = rooms[roomName].messages || [];
+      }
+
+      // Notificar a todos en la sala
+      socket.to(roomName).emit('user-joined', {
+        username,
+        message: `${username} se unió al chat`,
+        allUsers: onlineUsernames
+      });
 
       // Enviar historial y lista de usuarios al usuario nuevo
       socket.emit('room-joined', {
@@ -326,11 +345,25 @@ app.get('/test-db', async (req, res) => {
     });
   } catch (error) {
     console.error('Error al verificar BD:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Error de conexión a base de datos',
-      error: error.message
-    });
+    
+    // Si hay error de conexión, responder con modo offline
+    if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED' || error.message.includes('Connection terminated')) {
+      res.json({
+        status: 'offline',
+        message: 'Base de datos no disponible - Chat funcionando en modo offline',
+        data: {
+          current_time: new Date().toISOString(),
+          total_users: connectedUsernames.size,
+          mode: 'offline'
+        }
+      });
+    } else {
+      res.status(500).json({
+        status: 'error',
+        message: 'Error de conexión a base de datos',
+        error: error.message
+      });
+    }
   }
 });
 
