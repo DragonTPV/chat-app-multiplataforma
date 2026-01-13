@@ -1,0 +1,30 @@
+# Node.js dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+coverage/
+build/
+dist/
+
+# Local databases
+chat.db
+*.sqlite
+*.db
+
+# Misc
+*.tgz
+*.zip
