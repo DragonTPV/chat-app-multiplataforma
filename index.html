@@ -40,6 +40,67 @@
             flex-direction: column;
         }
 
+        .chat-select {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            outline: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .private-chat-info {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+
+        .contact-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-online {
+            background: #28a745;
+        }
+
+        .status-offline {
+            background: #6c757d;
+        }
+
+        .status-self {
+            background: #007bff;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contact-name {
+            font-weight: bold;
+        }
+
+        .contact-meta {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .empty-state {
+            color: #999;
+            text-align: center;
+        }
+
         .chat-header {
             background: #667eea;
             color: white;
@@ -126,6 +187,32 @@
             background: #5a67d8;
         }
 
+        .btn-test-db {
+            margin-top: 10px;
+            background: #17a2b8;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .db-status-panel {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .btn-leave {
+            background: #e53e3e;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
         .login-section h1 {
             margin-bottom: 20px;
             color: #333;
@@ -185,6 +272,24 @@
             border-right: 1px solid #e9ecef;
             padding: 15px;
             overflow-y: auto;
+        }
+
+        .users-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .btn-add-contact {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
         }
 
         .users-sidebar h3 {
@@ -272,8 +377,8 @@
             <input type="email" id="email-input" placeholder="Tu email (opcional)">
             <input type="text" id="room-input" placeholder="Nombre de la sala" value="sala-general" required>
             <button id="join-btn">Unirse al Chat</button>
-            <button id="test-db-btn" style="margin-top: 10px; background: #17a2b8; color: white; border: none; padding: 10px 15px; border-radius: 20px; cursor: pointer;">Verificar Base de Datos</button>
-            <div id="db-status" style="margin-top: 10px; padding: 10px; border-radius: 5px; display: none;"></div>
+            <button id="test-db-btn" class="btn-test-db">Verificar Base de Datos</button>
+            <div id="db-status" class="db-status-panel"></div>
         </div>
 
         <!-- Sección del Chat -->
@@ -283,15 +388,15 @@
                     <div id="room-name">Sala</div>
                     <div id="users-count" class="users-list">0 usuarios</div>
                 </div>
-                <button id="leave-btn" style="background: #e53e3e; padding: 8px 15px; border-radius: 20px; color: white; border: none; cursor: pointer;">Salir</button>
+                <button id="leave-btn" class="btn-leave">Salir</button>
             </div>
 
             <div class="chat-content">
                 <!-- Lista de usuarios -->
                 <div class="users-sidebar">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div class="users-toolbar">
                         <h3>Contactos</h3>
-                        <button id="add-contact-btn" style="background: #28a745; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 16px;">+</button>
+                        <button id="add-contact-btn" class="btn-add-contact">+</button>
                     </div>
                     <ul id="users-list"></ul>
                 </div>
@@ -307,8 +412,8 @@
                         <!-- Mensajes públicos -->
                     </div>
                     
-                    <div id="private-messages" class="chat-messages" style="display: none;">
-                        <div id="private-chat-info" style="text-align: center; color: #666; padding: 20px;">
+                    <div id="private-messages" class="chat-messages hidden">
+                        <div id="private-chat-info" class="private-chat-info">
                             Selecciona un usuario para iniciar chat privado
                         </div>
                     </div>
@@ -316,11 +421,11 @@
             </div>
 
             <div class="chat-input">
-                <select id="chat-type" style="padding: 12px; border: 2px solid #e9ecef; border-radius: 25px; outline: none;">
+                <select id="chat-type" class="chat-select">
                     <option value="public">Público</option>
                     <option value="private">Privado</option>
                 </select>
-                <select id="target-user" style="padding: 12px; border: 2px solid #e9ecef; border-radius: 25px; outline: none; display: none;">
+                <select id="target-user" class="chat-select hidden">
                     <option value="">Seleccionar usuario...</option>
                 </select>
                 <input type="text" id="message-input" placeholder="Escribe tu mensaje..." maxlength="500">
@@ -442,7 +547,7 @@
                 // Si el usuario que abandonó estaba en chat privado, limpiar
                 if (selectedUser === data.username) {
                     selectedUser = '';
-                    privateMessages.innerHTML = '<div id="private-chat-info" style="text-align: center; color: #666; padding: 20px;">Selecciona un usuario para iniciar chat privado</div>';
+                    privateMessages.innerHTML = '<div id="private-chat-info" class="private-chat-info">Selecciona un usuario para iniciar chat privado</div>';
                 }
             });
 
@@ -588,19 +693,20 @@
             targetUserSelect.innerHTML = '<option value="">Seleccionar usuario...</option>';
             
             if (allUsers.size === 0) {
-                usersList.innerHTML = '<li style="color: #999; text-align: center;">No hay usuarios conectados</li>';
+                usersList.innerHTML = '<li class="empty-state">No hay usuarios conectados</li>';
                 console.log('📝 Mensaje: No hay usuarios conectados');
             } else {
                 allUsers.forEach(username => {
                     console.log('➕ Agregando usuario:', username);
                     
                     const isCurrentUser = username === currentUsername;
+                    const statusClass = isCurrentUser ? 'status-dot status-self' : 'status-dot status-online';
                     
                     // Agregar a la lista lateral
                     const li = document.createElement('li');
                     li.innerHTML = `
-                        <div style="display: flex; align-items: center;">
-                            <div style="width: 8px; height: 8px; background: ${isCurrentUser ? '#007bff' : '#28a745'}; border-radius: 50%; margin-right: 8px;"></div>
+                        <div class="contact-row">
+                            <span class="${statusClass}"></span>
                             <span>${username}${isCurrentUser ? ' (tú)' : ''}</span>
                         </div>
                     `;

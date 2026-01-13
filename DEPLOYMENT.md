@@ -5,6 +5,7 @@
 ### 1. Render (Recomendado - Verdaderamente Gratis)
 
 **Ventajas:**
+
 - ✅ **100% GRATIS POR SIEMPRE** (no es prueba)
 - ✅ 750 horas/mes de ejecución (suficiente para 24/7)
 - ✅ Base de datos PostgreSQL gratuita
@@ -13,12 +14,14 @@
 - ✅ Dominio onrender.com gratuito
 
 **Límites gratuitos:**
+
 - 750 horas/mes (suficiente para 24/7)
 - 512MB RAM
 - Base de datos PostgreSQL gratuita
 - 100GB de ancho de banda
 
 **Pasos:**
+
 1. **Crea cuenta en** [Render](https://render.com)
 2. **Conecta tu repositorio GitHub**
 3. **Configura "Web Service"**
@@ -28,6 +31,7 @@
 ### 2. Vercel (Excelente para Frontend + Backend)
 
 **Ventajas:**
+
 - ✅ **100% GRATIS POR SIEMPRE**
 - ✅ Serverless Functions para backend
 - ✅ CDN global
@@ -35,6 +39,7 @@
 - ✅ Sin tiempo de inactividad
 
 **Límites gratuitos:**
+
 - 100GB de ancho de banda/mes
 - Serverless Functions gratuitas
 - Base de datos externa (necesitarás Railway para DB)
@@ -61,6 +66,7 @@
 - ✅ Base de datos PostgreSQL gratuita
 
 **Límites gratuitos:**
+
 - 4000 horas/mes (no 24/7)
 - Se duerme después de 5 minutos inactividad
 - Perfecto para prototipos
@@ -68,6 +74,7 @@
 ### 5. Heroku (Plan Eco)
 
 **Ventajas:**
+
 - ✅ **$5/mes** (muy económico)
 - ✅ Base de datos PostgreSQL incluida
 - ✅ Confiable y estable
@@ -76,7 +83,17 @@
 
 ---
 
-## 🏆 Recomendación: Render
+## Opciones con Periodo de Prueba (Evitar)
+
+### Railway (Solo para prueba)
+
+- ❌ Solo 30 días gratis
+- ❌ Después requiere pago
+- ❌ No recomendado para producción gratuita
+
+---
+
+## Recomendación: Render
 
 **Render es la mejor opción gratuita:**
 - ✅ Verdaderamente gratis (no prueba)
@@ -87,27 +104,20 @@
 
 ---
 
-## ⚠️ Opciones con Periodo de Prueba (Evitar)
-
-### Railway (Solo para prueba)
-- ❌ Solo 30 días gratis
-- ❌ Después requiere pago
-- ❌ No recomendado para producción gratuita
-
----
-
 ## 📋 Pasos para Render (100% Gratis)
 
 ### Paso 1: Preparar el Repositorio
 Tu código ya está listo en: `https://github.com/DragonTPV/chat-app-multiplataforma`
 
 ### Paso 2: Configurar Render
+
 1. **Ve a** [Render](https://render.com)
 2. **"Sign Up"** → "Sign up with GitHub"
 3. **Autoriza acceso** a tu repositorio
 4. **"New"** → "Web Service"
 
 ### Paso 3: Configurar Web Service
+
 - **Repository**: `DragonTPV/chat-app-multiplataforma`
 - **Name**: `chat-app`
 - **Environment**: `Node`
@@ -116,6 +126,7 @@ Tu código ya está listo en: `https://github.com/DragonTPV/chat-app-multiplataf
 - **Instance Type**: `Free`
 
 ### Paso 4: Agregar Base de Datos
+
 1. **"New"** → "PostgreSQL"
 2. **Name**: `chat-db`
 3. **Database Name**: `chat`
@@ -123,6 +134,7 @@ Tu código ya está listo en: `https://github.com/DragonTPV/chat-app-multiplataf
 5. **Plan**: `Free`
 
 ### Paso 5: Conectar Base de Datos
+
 1. **Copia la DATABASE_URL** de la base de datos
 2. **Ve a tu Web Service** → "Environment"
 3. **Agrega variable**: `DATABASE_URL` = (pegar la URL)
@@ -198,22 +210,6 @@ Para hosting **verdaderamente gratis sin prueba**:
 4. **Glitch** - Fácil pero se duerme
 
 **Evita Railway** si buscas gratis permanente - solo es 30 días de prueba.
-
-### 3. Vercel (Frontend + Backend)
-
-**Ventajas:**
-- ✅ Excelente para frontend
-- ✅ Soporte Serverless Functions
-- ✅ Plan gratuito muy generoso
-- ✅ CDN global
-
-**Pasos:**
-1. **Crea cuenta en** [Vercel](https://vercel.com)
-2. **Conecta tu repositorio**
-3. **Configura vercel.json**
-4. **Despliega automáticamente**
-
----
 
 ## 📋 Preparación del Proyecto
 
