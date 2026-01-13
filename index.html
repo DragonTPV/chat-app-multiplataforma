@@ -677,7 +677,7 @@
                             </div>
                         </div>
                     `;
-                    li.onclick = () => selectUser(contact.username);
+                    li.onclick = (e) => selectUser(contact.username, e);
                     usersList.appendChild(li);
 
                     // Agregar al selector para chat privado
@@ -687,8 +687,10 @@
                     targetUserSelect.appendChild(option);
                 });
 
+        }
+
         // Función para seleccionar usuario
-        function selectUser(username) {
+        function selectUser(username, e) {
             selectedUser = username;
             targetUserSelect.value = username;
             chatTypeSelect.value = 'private';
@@ -698,7 +700,7 @@
             document.querySelectorAll('.users-sidebar li').forEach(li => {
                 li.classList.remove('selected');
             });
-            event.target.classList.add('selected');
+            e.target.classList.add('selected');
             
             // Solicitar historial privado
             socket.emit('get-private-history', { targetUsername: username });
@@ -778,6 +780,25 @@
             }
 
             usersCountDiv.textContent = `${count} usuario${count !== 1 ? 's' : ''}`;
+        }
+
+        function showAddContactDialog() {
+            const contactUsername = prompt('Ingresa el nombre de usuario del contacto:');
+            const email = prompt('Ingresa el email del contacto (opcional):');
+            const phoneNumber = prompt('Ingresa el número de teléfono del contacto (opcional):');
+            if (contactUsername) {
+                addContact(contactUsername, email, phoneNumber);
+            }
+        }
+
+        function addContact(contactUsername, email, phoneNumber) {
+            socket.emit('add-contact', {
+                userUsername: currentUsername,
+                contactUsername,
+                deviceId: deviceId,
+                email,
+                phoneNumber
+            });
         }
 
         // Event Listeners
@@ -947,7 +968,6 @@
         addContactBtn.addEventListener('click', showAddContactDialog);
 
         // Conectar automáticamente al cargar la página
-        }
     </script>
 </body>
 </html>
