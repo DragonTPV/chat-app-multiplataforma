@@ -690,20 +690,6 @@
             }
         }
 
-        // Función para mostrar diálogo de agregar contacto
-        function showAddContactDialog() {
-            const contactName = prompt('Ingresa el nombre del contacto:');
-            if (!contactName || !contactName.trim()) return;
-            
-            const phoneNumber = prompt('Ingresa el número telefónico (opcional):');
-            
-            addContact(contactName.trim(), phoneNumber ? phoneNumber.trim() : null);
-        }
-
-        // Función para agregar contacto
-        async function addContact(contactUsername, phoneNumber = null) {
-            if (!currentUsername) {
-                alert('Debes estar conectado para agregar contactos');
                 return;
             }
             

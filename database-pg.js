@@ -64,8 +64,9 @@ async function initDatabase() {
       CREATE TABLE IF NOT EXISTS contacts (
         id SERIAL PRIMARY KEY,
         user_username VARCHAR(255) NOT NULL,
-        contact_username VARCHAR(255) NOT NULL,
+        contact_username VARCHAR(255),
         device_id VARCHAR(255) NOT NULL,
+        email VARCHAR(255),
         phone_number VARCHAR(20),
         added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(user_username, device_id)
@@ -199,7 +200,7 @@ module.exports = {
   },
 
   // Funciones de contactos (WhatsApp-like)
-  addContact: async (userUsername, contactUsername, deviceId, phoneNumber = null) => {
+  addContact: async (userUsername, contactUsername, deviceId, email = null, phoneNumber = null) => {
     try {
       // Verificar que el usuario existe
       const userExists = await pool.query('SELECT id FROM users WHERE username = $1', [userUsername]);
@@ -209,11 +210,11 @@ module.exports = {
       }
 
       const result = await pool.query(
-        `INSERT INTO contacts (user_username, contact_username, device_id, phone_number)
-         VALUES ($1, $2, $3, $4)
+        `INSERT INTO contacts (user_username, contact_username, device_id, email, phone_number)
+         VALUES ($1, $2, $3, $4, $5)
          ON CONFLICT (user_username, device_id) DO NOTHING
          RETURNING id`,
-        [userUsername, contactUsername, deviceId, phoneNumber]
+        [userUsername, contactUsername, deviceId, email, phoneNumber]
       );
       return result.rows[0] || { id: null }; // Si ya existe, retorna null
     } catch (error) {
@@ -232,24 +233,24 @@ module.exports = {
       throw error;
     }
 
-getContacts: async (userUsername) => {
-try {
-const result = await pool.query(
-`SELECT c.contact_username as username, c.device_id, c.phone_number, u.email, u.is_online, u.last_seen, c.added_at
-FROM contacts c
-LEFT JOIN users u ON c.contact_username = u.username
-WHERE c.user_username = $1
-ORDER BY u.is_online DESC, u.last_seen DESC`,
-[userUsername]
-);
-return result.rows;
-} catch (error) {
-throw error;
-}
-},
+  getContacts: async (userUsername) => {
+    try {
+      const result = await pool.query(
+        `SELECT c.contact_username as username, c.device_id, c.email, c.phone_number, u.email as user_email, u.is_online, u.last_seen, c.added_at
+         FROM contacts c
+         LEFT JOIN users u ON c.contact_username = u.username
+         WHERE c.user_username = $1
+         ORDER BY u.is_online DESC, u.last_seen DESC`,
+        [userUsername]
+      );
+      return result.rows;
+    } catch (error) {
+      throw error;
+    }
+  },
 
-// Cerrar conexión
-close: async () => {
-await pool.end();
-}
+  // Cerrar conexión
+  close: async () => {
+    await pool.end();
+  }
 };

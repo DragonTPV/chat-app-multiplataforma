@@ -373,13 +373,13 @@ app.get('/test-db', async (req, res) => {
 // Rutas de contactos (WhatsApp-like)
 app.post('/add-contact', async (req, res) => {
   try {
-    const { userUsername, contactUsername, deviceId, phoneNumber } = req.body;
+    const { userUsername, contactUsername, deviceId, email, phoneNumber } = req.body;
     
-    if (!userUsername || !contactUsername || !deviceId) {
-      return res.status(400).json({ error: 'userUsername, contactUsername y deviceId son requeridos' });
+    if (!userUsername || !deviceId) {
+      return res.status(400).json({ error: 'userUsername y deviceId son requeridos' });
     }
     
-    const result = await db.addContact(userUsername, contactUsername, deviceId, phoneNumber);
+    const result = await db.addContact(userUsername, contactUsername, deviceId, email, phoneNumber);
     
     if (result.id) {
       res.json({ success: true, message: 'Contacto agregado exitosamente' });
