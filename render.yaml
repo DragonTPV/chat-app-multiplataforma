@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: chat-app-multiplataforma
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: chat-db
+          property: connectionString
+
+databases:
+  - name: chat-db
+    plan: free
