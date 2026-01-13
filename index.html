@@ -685,45 +685,6 @@
                     option.value = contact.username;
                     option.textContent = contact.username;
                     targetUserSelect.appendChild(option);
-                });
-                console.log('✅ Contactos agregados a la lista');
-            }
-        }
-
-                return;
-            }
-            
-            try {
-                console.log('📤 Agregando contacto:', { contactUsername, deviceId, phoneNumber });
-                const response = await fetch('/add-contact', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        userUsername: currentUsername,
-                        contactUsername: contactUsername,
-                        deviceId: deviceId,
-                        phoneNumber: phoneNumber
-                    })
-                });
-                
-                const result = await response.json();
-                console.log('📋 Respuesta agregar contacto:', result);
-                
-                if (result.success) {
-                    displaySystemMessage(`Contacto ${contactUsername} agregado exitosamente`);
-                    // Recargar contactos
-                    loadContacts();
-                } else {
-                    alert(result.message || 'Error al agregar contacto');
-                }
-            } catch (error) {
-                console.error('❌ Error al agregar contacto:', error);
-                alert('Error al agregar contacto');
-            }
-        }
-
         // Función para seleccionar usuario
         function selectUser(username) {
             selectedUser = username;
