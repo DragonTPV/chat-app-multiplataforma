@@ -539,18 +539,35 @@
 
         // Función para actualizar lista de usuarios
         function updateUsersList(users) {
-            console.log('Actualizando lista de usuarios:', users);
-            console.log('Usuario actual:', currentUsername);
+            console.log('🔄 Actualizando lista de usuarios:', users);
+            console.log('👤 Usuario actual:', currentUsername);
+            console.log('📋 Elemento users-list:', usersList);
+            console.log('📋 Elemento targetUserSelect:', targetUserSelect);
             
             allUsers = new Set(users.filter(u => u !== currentUsername));
+            
+            if (!usersList) {
+                console.error('❌ Error: Elemento users-list no encontrado');
+                return;
+            }
+            
+            if (!targetUserSelect) {
+                console.error('❌ Error: Elemento targetUserSelect no encontrado');
+                return;
+            }
             
             usersList.innerHTML = '';
             targetUserSelect.innerHTML = '<option value="">Seleccionar usuario...</option>';
             
+            console.log('👥 Usuarios filtrados (excluyendo yo):', Array.from(allUsers));
+            
             if (allUsers.size === 0) {
                 usersList.innerHTML = '<li style="color: #999; text-align: center;">No hay otros usuarios conectados</li>';
+                console.log('📝 Mensaje: No hay otros usuarios conectados');
             } else {
                 allUsers.forEach(username => {
+                    console.log('➕ Agregando usuario:', username);
+                    
                     // Agregar a la lista lateral
                     const li = document.createElement('li');
                     li.innerHTML = `
@@ -568,9 +585,10 @@
                     option.textContent = username;
                     targetUserSelect.appendChild(option);
                 });
+                console.log('✅ Usuarios agregados a la lista y selector');
             }
-
-            console.log('Usuarios en lista:', Array.from(allUsers));
+            
+            console.log('🎯 Lista de usuarios actualizada. Total:', allUsers.size);
         }
 
         // Función para seleccionar usuario
