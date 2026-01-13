@@ -254,4 +254,7 @@ module.exports = {
   close: async () => {
     await pool.end();
   },
+
+  // Exponer pool para utilidades puntuales
+  pool,
 };

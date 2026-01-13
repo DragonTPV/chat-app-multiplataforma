@@ -4,7 +4,7 @@
 
 ### Render (Recomendado)
 
-#### Ventajas
+#### Ventajas de Render
 
 - ✅ 100% gratis sin límite de tiempo.
 - ✅ 750 horas/mes (permite 24/7).
@@ -12,13 +12,13 @@
 - ✅ CI/CD desde GitHub.
 - ✅ SSL y dominio *.onrender.com.
 
-#### Límites gratuitos
+#### Límites gratuitos en Render
 
 - 750 horas/mes.
 - 512 MB de RAM.
 - 100 GB de ancho de banda.
 
-#### Pasos rápidos
+#### Pasos rápidos en Render
 
 1. Crea cuenta en [Render](https://render.com).
 2. Conecta tu repositorio de GitHub.
@@ -28,13 +28,13 @@
 
 ### Vercel
 
-#### Ventajas
+#### Ventajas de Vercel
 
 - ✅ CDN global y serverless functions.
 - ✅ Dominio *.vercel.app.
 - ✅ Excelente para frontends React/Next.
 
-#### Límites gratuitos
+#### Límites gratuitos en Vercel
 
 - 100 GB de ancho de banda/mes.
 - Funciones serverless gratuitas (con límites).
@@ -42,7 +42,7 @@
 
 ### Netlify
 
-#### Ventajas
+#### Ventajas de Netlify
 
 - ✅ CDN global.
 - ✅ Functions y Scheduled functions.
@@ -56,24 +56,24 @@
 
 ### Glitch
 
-#### Ventajas
+#### Ventajas de Glitch
 
 - ✅ Editor web muy sencillo.
 - ✅ Deploy instantáneo.
 
-#### Límites
+#### Límites de Glitch
 
 - Apps se “duermen” tras 5 min inactivas.
 - 4000 horas/mes (no 24/7).
 
 ### Heroku (Plan Eco)
 
-#### Ventajas
+#### Ventajas de Heroku
 
 - ✅ Plataforma veterana y estable.
 - ✅ PostgreSQL integrado.
 
-#### Consideración
+#### Consideración sobre Heroku
 
 - 💲 Plan Eco cuesta 5 USD/mes (ya no es gratuito, pero es económico).
 
@@ -87,7 +87,9 @@
 
 ## Recomendación General
 
-Render ofrece el mejor balance gratis: ejecuta 24/7, trae PostgreSQL y se integra con GitHub. Usa Render para backend + DB y, si lo deseas, Vercel/Netlify para frontends estáticos.
+Render ofrece el mejor balance gratis: ejecuta 24/7, trae PostgreSQL y se
+integra con GitHub. Usa Render para backend + DB y, si lo deseas,
+Vercel/Netlify para frontends estáticos.
 
 ## Pasos para Render (100 % Gratis)
 
@@ -274,7 +276,7 @@ const socket = io('https://tu-app.railway.app');
 const socket = io(window.location.origin);
 ```
 
-##  Mantenimiento
+## Mantenimiento
 
 ### Automático
 
