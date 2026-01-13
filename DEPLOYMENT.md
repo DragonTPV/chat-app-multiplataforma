@@ -2,223 +2,139 @@
 
 ## Opciones 100% Gratuitas (Sin Periodo de Prueba)
 
-### 1. Render (Recomendado - Verdaderamente Gratis)
+### Render (Recomendado)
 
-**Ventajas:**
+#### Ventajas
 
-- ✅ **100% GRATIS POR SIEMPRE** (no es prueba)
-- ✅ 750 horas/mes de ejecución (suficiente para 24/7)
-- ✅ Base de datos PostgreSQL gratuita
-- ✅ Despliegue automático desde GitHub
-- ✅ SSL automático
-- ✅ Dominio onrender.com gratuito
+- ✅ 100% gratis sin límite de tiempo.
+- ✅ 750 horas/mes (permite 24/7).
+- ✅ Base de datos PostgreSQL incluida.
+- ✅ CI/CD desde GitHub.
+- ✅ SSL y dominio *.onrender.com.
 
-**Límites gratuitos:**
+#### Límites gratuitos
 
-- 750 horas/mes (suficiente para 24/7)
-- 512MB RAM
-- Base de datos PostgreSQL gratuita
-- 100GB de ancho de banda
+- 750 horas/mes.
+- 512 MB de RAM.
+- 100 GB de ancho de banda.
 
-**Pasos:**
+#### Pasos rápidos
 
-1. **Crea cuenta en** [Render](https://render.com)
-2. **Conecta tu repositorio GitHub**
-3. **Configura "Web Service"**
-4. **Agrega "PostgreSQL Database"**
-5. **¡Listo! Funciona 24/7 gratis**
+1. Crea cuenta en [Render](https://render.com).
+2. Conecta tu repositorio de GitHub.
+3. Crea un “Web Service”.
+4. Agrega una base “PostgreSQL Database”.
+5. Configura variables de entorno y despliega.
 
-### 2. Vercel (Excelente para Frontend + Backend)
+### Vercel
 
-**Ventajas:**
+#### Ventajas
 
-- ✅ **100% GRATIS POR SIEMPRE**
-- ✅ Serverless Functions para backend
-- ✅ CDN global
-- ✅ Dominio vercel.app gratuito
-- ✅ Sin tiempo de inactividad
+- ✅ CDN global y serverless functions.
+- ✅ Dominio *.vercel.app.
+- ✅ Excelente para frontends React/Next.
 
-**Límites gratuitos:**
+#### Límites gratuitos
 
-- 100GB de ancho de banda/mes
-- Serverless Functions gratuitas
-- Base de datos externa (necesitarás Railway para DB)
+- 100 GB de ancho de banda/mes.
+- Funciones serverless gratuitas (con límites).
+- Necesita DB externa (Railway/Neon/etc.).
 
-### 3. Netlify (Frontend + Functions)
+### Netlify
 
-**Ventajas:**
-- ✅ **100% GRATIS POR SIEMPRE**
-- ✅ Serverless Functions
-- ✅ CDN global
-- ✅ Dominio netlify.app gratuito
+#### Ventajas
 
-**Límites gratuitos:**
-- 100GB de ancho de banda/mes
-- 125k invocaciones de functions/mes
-- Base de datos externa
+- ✅ CDN global.
+- ✅ Functions y Scheduled functions.
+- ✅ Dominio *.netlify.app.
 
-### 4. Glitch (Rápido y Fácil)
+#### Límites gratuitos
 
-**Ventajas:**
-- ✅ **100% GRATIS POR SIEMPRE**
-- ✅ Editor en línea
-- ✅ Despliegue instantáneo
-- ✅ Base de datos PostgreSQL gratuita
+- 100 GB de ancho de banda/mes.
+- 125 k invocaciones/mes en functions.
+- Sin base de datos integrada.
 
-**Límites gratuitos:**
+### Glitch
 
-- 4000 horas/mes (no 24/7)
-- Se duerme después de 5 minutos inactividad
-- Perfecto para prototipos
+#### Ventajas
 
-### 5. Heroku (Plan Eco)
+- ✅ Editor web muy sencillo.
+- ✅ Deploy instantáneo.
 
-**Ventajas:**
+#### Límites
 
-- ✅ **$5/mes** (muy económico)
-- ✅ Base de datos PostgreSQL incluida
-- ✅ Confiable y estable
+- Apps se “duermen” tras 5 min inactivas.
+- 4000 horas/mes (no 24/7).
 
-**Nota:** Ya no es gratuito pero es muy económico ($5/mes)
+### Heroku (Plan Eco)
 
----
+#### Ventajas
 
-## Opciones con Periodo de Prueba (Evitar)
+- ✅ Plataforma veterana y estable.
+- ✅ PostgreSQL integrado.
 
-### Railway (Solo para prueba)
+#### Consideración
 
-- ❌ Solo 30 días gratis
-- ❌ Después requiere pago
-- ❌ No recomendado para producción gratuita
+- 💲 Plan Eco cuesta 5 USD/mes (ya no es gratuito, pero es económico).
 
----
+## Opciones con Periodo de Prueba (evitar si buscas gratis permanente)
 
-## Recomendación: Render
+### Railway
 
-**Render es la mejor opción gratuita:**
-- ✅ Verdaderamente gratis (no prueba)
-- ✅ 750 horas = 24/7 posible
-- ✅ Base de datos PostgreSQL gratuita
-- ✅ Fácil de configurar
-- ✅ Confiable
+- ❌ Solo 30 días gratis.
+- ❌ Pide tarjeta y luego cobra.
+- ❌ No recomendable para proyectos permanentes sin presupuesto.
 
----
+## Recomendación General
 
-## 📋 Pasos para Render (100% Gratis)
+Render ofrece el mejor balance gratis: ejecuta 24/7, trae PostgreSQL y se integra con GitHub. Usa Render para backend + DB y, si lo deseas, Vercel/Netlify para frontends estáticos.
 
-### Paso 1: Preparar el Repositorio
-Tu código ya está listo en: `https://github.com/DragonTPV/chat-app-multiplataforma`
+## Pasos para Render (100 % Gratis)
 
-### Paso 2: Configurar Render
-
-1. **Ve a** [Render](https://render.com)
-2. **"Sign Up"** → "Sign up with GitHub"
-3. **Autoriza acceso** a tu repositorio
-4. **"New"** → "Web Service"
-
-### Paso 3: Configurar Web Service
-
-- **Repository**: `DragonTPV/chat-app-multiplataforma`
-- **Name**: `chat-app`
-- **Environment**: `Node`
-- **Build Command**: `npm install`
-- **Start Command**: `npm start`
-- **Instance Type**: `Free`
-
-### Paso 4: Agregar Base de Datos
-
-1. **"New"** → "PostgreSQL"
-2. **Name**: `chat-db`
-3. **Database Name**: `chat`
-4. **User**: `chat_user`
-5. **Plan**: `Free`
-
-### Paso 5: Conectar Base de Datos
-
-1. **Copia la DATABASE_URL** de la base de datos
-2. **Ve a tu Web Service** → "Environment"
-3. **Agrega variable**: `DATABASE_URL` = (pegar la URL)
-4. **"Deploy Changes"**
-
-### Paso 6: Probar
-- **Espera 2-3 minutos** para el despliegue
-- **Visita tu URL**: `https://chat-app.onrender.com`
-- **¡Listo! Tu chat funciona 24/7 gratis**
-
----
+1. **Preparar repositorio:** `https://github.com/DragonTPV/chat-app-multiplataforma`.
+2. **Crear Web Service:** Sign up → conectar GitHub → “New → Web Service”.
+3. **Configurar build:** `npm install`, start `npm start`, instancia Free.
+4. **Agregar base:** “New → PostgreSQL” (plan Free).
+5. **Conectar base:** copiar `DATABASE_URL`, pegarla en Environment, desplegar cambios.
+6. **Probar:** esperar 2‑3 min y visitar `https://chat-app-multiplataforma.onrender.com`.
 
 ## 💰 Costos Reales
 
-### Render (Gratis):
-- **$0/mes** para siempre
-- **750 horas** = suficiente para 24/7
-- **Base de datos** gratuita
-- **SSL** automático
+### Render (Gratis)
 
-### Vercel (Gratis):
-- **$0/mes** para siempre
-- **100GB** ancho de banda
-- **Serverless** functions
-- **CDN** global
+- $0/mes, 750 horas, DB PostgreSQL y SSL incluidos.
 
----
+### Vercel (Gratis)
+
+- $0/mes, 100 GB de ancho de banda, funciones y CDN.
 
 ## 🌐 URLs Finales
 
-Una vez desplegado:
-- **Render**: `https://chat-app.onrender.com`
-- **Vercel**: `https://chat-app.vercel.app`
-- **Netlify**: `https://chat-app.netlify.app`
-
----
+- Render: `https://chat-app-multiplataforma.onrender.com`
+- Vercel: `https://chat-app.vercel.app`
+- Netlify: `https://chat-app.netlify.app`
 
 ## ✅ Ventajas del Despliegue Gratuito
 
-- ✅ **Sin mantener PC encendida**
-- ✅ **Acceso global** 24/7
-- ✅ **SSL automático**
-- ✅ **Dominio personalizado**
-- ✅ **Escalable**
-- ✅ **Actualizaciones automáticas**
-
----
+- Sin mantener PC encendida.
+- Acceso global 24/7.
+- SSL automático.
+- Escala fácilmente.
+- Actualizaciones automáticas desde Git/GitHub.
 
 ## 🚀 Alternativa: Auto-hosting
 
-Si prefieres control total:
-- **Raspberry Pi** (~$60 una vez)
-- **VPS económico** ($3-5/mes)
-- **Tu propio servidor** en casa
+- Raspberry Pi (~60 USD una vez).
+- VPS de bajo costo (3‑5 USD/mes).
+- Servidor propio en casa.
 
----
+## 📋 Preparación del Proyecto (Guía Técnica)
 
-## 📞 Soporte
+### Opción A: Railway (Recomendado para pruebas)
 
-- **Render**: [docs.render.com](https://docs.render.com)
-- **Vercel**: [vercel.com/docs](https://vercel.com/docs)
-- **Netlify**: [netlify.com/docs](https://netlify.com/docs)
-
----
-
-## ✅ Resumen
-
-Para hosting **verdaderamente gratis sin prueba**:
-
-1. **Render** (Recomendado) - 24/7 posible
-2. **Vercel** - Excelente para frontend
-3. **Netlify** - Bueno para prototipos
-4. **Glitch** - Fácil pero se duerme
-
-**Evita Railway** si buscas gratis permanente - solo es 30 días de prueba.
-
-## 📋 Preparación del Proyecto
-
-### Opción A: Railway (Recomendado)
-
-**1. Modificar database.js para PostgreSQL:**
+#### 1. Modificar `database.js` para PostgreSQL
 
 ```javascript
-// Reemplaza database.js con:
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -231,25 +147,26 @@ module.exports = {
     const result = await pool.query(
       `INSERT INTO users (username, email, last_seen, is_online)
        VALUES ($1, $2, CURRENT_TIMESTAMP, 1)
-       ON CONFLICT (username) 
+       ON CONFLICT (username)
        DO UPDATE SET email = $2, last_seen = CURRENT_TIMESTAMP, is_online = 1
        RETURNING id, username`,
       [username, email]
     );
     return result.rows[0];
   },
-  
-  // ... otras funciones similares usando pool.query()
+  // ...otras funciones usando pool.query()
 };
 ```
 
-**2. Crear archivo .env:**
-```
+#### 2. Crear archivo `.env`
+
+```env
 DATABASE_URL=postgresql://usuario:password@host:port/database
 NODE_ENV=production
 ```
 
-**3. Crear railway.json:**
+#### 3. Crear `railway.json`
+
 ```json
 {
   "build": {
@@ -264,12 +181,14 @@ NODE_ENV=production
 
 ### Opción B: Render
 
-**1. Crear render.yaml:**
+#### 1. Crear `render.yaml`
+
 ```yaml
 services:
   - type: web
-    name: chat-app
+    name: chat-app-multiplataforma
     env: node
+    plan: free
     buildCommand: npm install
     startCommand: npm start
     envVars:
@@ -285,37 +204,29 @@ databases:
     plan: free
 ```
 
----
-
 ## 🚀 Despliegue Paso a Paso (Railway)
 
 ### Paso 1: Preparar el Repositorio
 
 ```bash
-# 1. Inicializar git si no lo está
 git init
 git add .
 git commit -m "Initial commit"
-
-# 2. Crear repositorio en GitHub
-# 3. Conectar local con remoto
 git remote add origin https://github.com/tu-usuario/chat-app.git
 git push -u origin main
 ```
 
 ### Paso 2: Configurar Railway
 
-1. **Ve a** [Railway](https://railway.app)
-2. **"New Project" → "Deploy from GitHub repo"**
-3. **Selecciona tu repositorio**
-4. **Railway detectará automáticamente Node.js**
-5. **Agrega variable de entorno `DATABASE_URL`**
-6. **"Add PostgreSQL" desde la sección de servicios**
-7. **Conecta la base de datos a tu app**
+1. Ve a [Railway](https://railway.app).
+2. Crea proyecto → “Deploy from GitHub repo”.
+3. Selecciona el repo.
+4. Railway detecta Node.js automáticamente.
+5. Agrega `DATABASE_URL`.
+6. Añade servicio PostgreSQL.
+7. Conecta la base a tu app.
 
 ### Paso 3: Configurar Base de Datos
-
-**Ejecuta este SQL en la base de datos PostgreSQL:**
 
 ```sql
 CREATE TABLE users (
@@ -351,100 +262,66 @@ CREATE TABLE private_messages (
 );
 ```
 
----
-
 ## 📱 Actualizar Cliente para Producción
 
-**Cambia la URL del socket en index.html:**
+Use URL fija o dinámica:
 
 ```javascript
-// En lugar de localhost:3000
 const socket = io('https://tu-app.railway.app');
 ```
 
-**O hazlo dinámico:**
 ```javascript
 const socket = io(window.location.origin);
 ```
 
----
+##  Mantenimiento
 
-## 💰 Costos
+### Automático
 
-### Plan Gratuito (Railway):
-- **$0/mes** para proyectos pequeños
-- **500 horas** de ejecución/mes
-- **Base de datos PostgreSQL** gratuita
-- **SSL automático**
-- **Dominio railway.app**
+- Despliegues al hacer push.
+- SSL renovado automáticamente.
+- Backups (en planes pagos).
 
-### Plan Gratuito (Render):
-- **750 horas** de ejecución/mes
-- **Base de datos PostgreSQL** gratuita
-- **SSL automático**
-- **Dominio onrender.com**
+### Manual
 
----
+- Vigilar horas usadas al mes.
+- Actualizar dependencias.
+- Revisar logs periódicamente.
 
-## 🔄 Mantenimiento
+## 🌐 Acceso Desde Cualquier Lugar
 
-### Automático:
-- **Despliegue automático** al hacer push a GitHub
-- **SSL renovado** automáticamente
-- **Backups** de base de datos (en planes pagos)
-
-### Manual:
-- **Monitorear uso** de horas/mes
-- **Actualizar dependencias** regularmente
-- **Revisar logs** para errores
-
----
-
-## 🌐 Acceso desde cualquier lugar
-
-Una vez desplegado:
-
-1. **URL pública**: `https://tu-app.railway.app`
-2. **Acceso 24/7**: Sin depender de tu equipo
-3. **Multiplataforma**: PC, móvil, tablet
-4. **Escalable**: Crece con tus usuarios
-
----
+- URL pública siempre disponible.
+- Acceso 24/7 sin PC encendida.
+- Multiplataforma (PC/móvil/tablet).
+- Escalable según crecimiento.
 
 ## 🚨 Consideraciones
 
-### Seguridad:
-- **Usar HTTPS** (ya viene en hosting)
-- **Validar inputs** en el servidor
-- **Limitar rate** de conexiones
-- **Sanitizar mensajes**
+### Seguridad
 
-### Rendimiento:
-- **CDN** para archivos estáticos
-- **Caching** de mensajes frecuentes
-- **Pool de conexiones** a base de datos
-- **Monitor** de recursos
+- Usar HTTPS siempre.
+- Validar y sanitizar entradas.
+- Limitar tasa de peticiones.
 
----
+### Rendimiento
+
+- CDN para assets estáticos.
+- Caché de mensajes frecuentes.
+- Pool de conexiones a la DB.
+- Monitorizar CPU/RAM.
 
 ## 📞 Soporte
 
-Si necesitas ayuda:
-- **Documentación Railway**: https://docs.railway.app
-- **Documentación Render**: https://render.com/docs
-- **Comunidades**: Discord de cada plataforma
+- Render: [https://render.com/docs](https://render.com/docs)
+- Vercel: [https://vercel.com/docs](https://vercel.com/docs)
+- Netlify: [https://docs.netlify.com](https://docs.netlify.com)
+- Railway: [https://docs.railway.app](https://docs.railway.app)
 
----
+## ✅ Resumen Final
 
-## ✅ Resumen
-
-Para no depender de tu equipo local:
-
-1. **Elige plataforma** (Railway recomendado)
-2. **Sube código a GitHub**
-3. **Configura variables de entorno**
-4. **Despliega automáticamente**
-5. **Actualiza cliente** con nueva URL
-6. **Disfruta chat 24/7** 🎉
-
-Tu aplicación estará accesible globalmente sin necesidad de mantener tu computadora encendida.
+1. Elige la plataforma (Render recomendado).
+2. Sube código a GitHub.
+3. Configura variables como `DATABASE_URL`.
+4. Despliega automáticamente con cada push.
+5. Actualiza el cliente con la nueva URL.
+6. Disfruta un chat disponible 24/7 sin depender de tu computadora.
