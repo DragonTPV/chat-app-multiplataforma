@@ -370,6 +370,61 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
+// Rutas de contactos (WhatsApp-like)
+app.post('/add-contact', async (req, res) => {
+  try {
+    const { userUsername, contactUsername, deviceId, phoneNumber } = req.body;
+    
+    if (!userUsername || !contactUsername || !deviceId) {
+      return res.status(400).json({ error: 'userUsername, contactUsername y deviceId son requeridos' });
+    }
+    
+    const result = await db.addContact(userUsername, contactUsername, deviceId, phoneNumber);
+    
+    if (result.id) {
+      res.json({ success: true, message: 'Contacto agregado exitosamente' });
+    } else {
+      res.json({ success: false, message: 'El contacto ya existe' });
+    }
+  } catch (error) {
+    console.error('Error al agregar contacto:', error);
+    res.status(500).json({ error: 'Error al agregar contacto' });
+  }
+});
+
+app.delete('/remove-contact', async (req, res) => {
+  try {
+    const { userUsername, contactUsername } = req.body;
+    
+    if (!userUsername || !contactUsername) {
+      return res.status(400).json({ error: 'userUsername y contactUsername son requeridos' });
+    }
+    
+    const deletedCount = await db.removeContact(userUsername, contactUsername);
+    
+    if (deletedCount > 0) {
+      res.json({ success: true, message: 'Contacto eliminado exitosamente' });
+    } else {
+      res.json({ success: false, message: 'Contacto no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al eliminar contacto:', error);
+    res.status(500).json({ error: 'Error al eliminar contacto' });
+  }
+});
+
+app.get('/contacts/:username', async (req, res) => {
+  try {
+    const { username } = req.params;
+    
+    const contacts = await db.getContacts(username);
+    res.json({ contacts });
+  } catch (error) {
+    console.error('Error al obtener contactos:', error);
+    res.status(500).json({ error: 'Error al obtener contactos' });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
