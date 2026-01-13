@@ -347,15 +347,8 @@
         const usersCountDiv = document.getElementById('users-count');
         const messagesDiv = document.getElementById('messages');
 
-        // Nuevos elementos para chat privado
-        const chatTypeSelect = document.getElementById('chat-type');
-        const targetUserSelect = document.getElementById('target-user');
-        const usersList = document.getElementById('users-list');
-        const publicTab = document.getElementById('public-tab');
-        const privateTab = document.getElementById('private-tab');
-        const publicMessages = document.getElementById('public-messages');
-        const privateMessages = document.getElementById('private-messages');
-        const privateChatInfo = document.getElementById('private-chat-info');
+        // Nuevos elementos para gestión de contactos
+        const addContactBtn = document.getElementById('add-contact-btn');
 
         // Variables
         let socket;
@@ -406,13 +399,9 @@
                 displayMessageHistory(data.messages);
                 console.log('✅ displayMessageHistory ejecutado');
                 
-                console.log('🔍 Verificando función updateUsersList:', typeof updateUsersList);
-                if (typeof updateUsersList === 'function') {
-                    updateUsersList(data.allUsers || []);
-                    console.log('✅ updateUsersList ejecutado');
-                } else {
-                    console.error('❌ Error: updateUsersList no es una función');
-                }
+                // Cargar contactos en lugar de usuarios online
+                loadContacts();
+                console.log('✅ loadContacts ejecutado');
             });
 
             // Evento: nuevo mensaje
@@ -632,6 +621,121 @@
             }
             
             console.log('🎯 Lista de usuarios actualizada. Total:', allUsers.size);
+        }
+
+        // Función para cargar contactos
+        async function loadContacts() {
+            if (!currentUsername) return;
+            
+            try {
+                console.log('📥 Cargando contactos para:', currentUsername);
+                const response = await fetch(`/contacts/${currentUsername}`);
+                const data = await response.json();
+                
+                console.log('📋 Contactos recibidos:', data.contacts);
+                updateContactsList(data.contacts);
+            } catch (error) {
+                console.error('❌ Error al cargar contactos:', error);
+                // Fallback: mostrar lista de usuarios conectados
+                if (allUsers.size > 0) {
+                    updateUsersList(Array.from(allUsers));
+                }
+            }
+        }
+
+        // Función para actualizar lista de contactos
+        function updateContactsList(contacts) {
+            console.log('🔄 Actualizando lista de contactos:', contacts);
+            console.log('📋 Elemento users-list:', usersList);
+            
+            if (!usersList) {
+                console.error('❌ Error: Elemento users-list no encontrado');
+                return;
+            }
+            
+            usersList.innerHTML = '';
+            targetUserSelect.innerHTML = '<option value="">Seleccionar usuario...</option>';
+            
+            if (!contacts || contacts.length === 0) {
+                usersList.innerHTML = '<li style="color: #999; text-align: center;">No tienes contactos agregados</li>';
+                console.log('📝 Mensaje: No tienes contactos agregados');
+            } else {
+                contacts.forEach(contact => {
+                    console.log('➕ Agregando contacto:', contact);
+                    
+                    const isOnline = contact.is_online === 1;
+                    const lastSeen = contact.last_seen ? new Date(contact.last_seen).toLocaleString() : 'Nunca';
+                    
+                    // Agregar a la lista lateral
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <div style="width: 8px; height: 8px; background: ${isOnline ? '#28a745' : '#6c757d'}; border-radius: 50%; margin-right: 8px;"></div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: bold;">${contact.username}</div>
+                                <div style="font-size: 11px; color: #666;">${isOnline ? 'En línea' : 'Última vez: ' + lastSeen}</div>
+                            </div>
+                        </div>
+                    `;
+                    li.onclick = () => selectUser(contact.username);
+                    usersList.appendChild(li);
+
+                    // Agregar al selector para chat privado
+                    const option = document.createElement('option');
+                    option.value = contact.username;
+                    option.textContent = contact.username;
+                    targetUserSelect.appendChild(option);
+                });
+                console.log('✅ Contactos agregados a la lista');
+            }
+        }
+
+        // Función para mostrar diálogo de agregar contacto
+        function showAddContactDialog() {
+            const contactName = prompt('Ingresa el nombre del contacto:');
+            if (!contactName || !contactName.trim()) return;
+            
+            const phoneNumber = prompt('Ingresa el número telefónico (opcional):');
+            
+            addContact(contactName.trim(), phoneNumber ? phoneNumber.trim() : null);
+        }
+
+        // Función para agregar contacto
+        async function addContact(contactUsername, phoneNumber = null) {
+            if (!currentUsername) {
+                alert('Debes estar conectado para agregar contactos');
+                return;
+            }
+            
+            try {
+                console.log('📤 Agregando contacto:', { contactUsername, deviceId, phoneNumber });
+                const response = await fetch('/add-contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userUsername: currentUsername,
+                        contactUsername: contactUsername,
+                        deviceId: deviceId,
+                        phoneNumber: phoneNumber
+                    })
+                });
+                
+                const result = await response.json();
+                console.log('📋 Respuesta agregar contacto:', result);
+                
+                if (result.success) {
+                    displaySystemMessage(`Contacto ${contactUsername} agregado exitosamente`);
+                    // Recargar contactos
+                    loadContacts();
+                } else {
+                    alert(result.message || 'Error al agregar contacto');
+                }
+            } catch (error) {
+                console.error('❌ Error al agregar contacto:', error);
+                alert('Error al agregar contacto');
+            }
         }
 
         // Función para seleccionar usuario
@@ -889,6 +993,9 @@
                 testDbBtn.textContent = 'Verificar Base de Datos';
             }
         });
+
+        // Event listener para agregar contacto
+        addContactBtn.addEventListener('click', showAddContactDialog);
 
         // Conectar automáticamente al cargar la página
     </script>
