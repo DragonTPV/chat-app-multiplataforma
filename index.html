@@ -385,10 +385,23 @@
 
             // Evento: usuario se une a la sala
             socket.on('room-joined', (data) => {
-                console.log('Unido a la sala:', data);
+                console.log('🏠 EVENTO room-joined RECIBIDO:', data);
+                console.log('👥 data.allUsers:', data.allUsers);
+                console.log('👤 data.users:', data.users);
+                
                 updateRoomInfo(data.roomName, data.users);
+                console.log('✅ updateRoomInfo ejecutado');
+                
                 displayMessageHistory(data.messages);
-                updateUsersList(data.allUsers || []);
+                console.log('✅ displayMessageHistory ejecutado');
+                
+                console.log('🔍 Verificando función updateUsersList:', typeof updateUsersList);
+                if (typeof updateUsersList === 'function') {
+                    updateUsersList(data.allUsers || []);
+                    console.log('✅ updateUsersList ejecutado');
+                } else {
+                    console.error('❌ Error: updateUsersList no es una función');
+                }
             });
 
             // Evento: nuevo mensaje
@@ -544,7 +557,8 @@
             console.log('📋 Elemento users-list:', usersList);
             console.log('📋 Elemento targetUserSelect:', targetUserSelect);
             
-            allUsers = new Set(users.filter(u => u !== currentUsername));
+            // Mostrar todos los usuarios conectados, incluyendo el actual
+            allUsers = new Set(users);
             
             if (!usersList) {
                 console.error('❌ Error: Elemento users-list no encontrado');
@@ -559,31 +573,35 @@
             usersList.innerHTML = '';
             targetUserSelect.innerHTML = '<option value="">Seleccionar usuario...</option>';
             
-            console.log('👥 Usuarios filtrados (excluyendo yo):', Array.from(allUsers));
-            
             if (allUsers.size === 0) {
-                usersList.innerHTML = '<li style="color: #999; text-align: center;">No hay otros usuarios conectados</li>';
-                console.log('📝 Mensaje: No hay otros usuarios conectados');
+                usersList.innerHTML = '<li style="color: #999; text-align: center;">No hay usuarios conectados</li>';
+                console.log('📝 Mensaje: No hay usuarios conectados');
             } else {
                 allUsers.forEach(username => {
                     console.log('➕ Agregando usuario:', username);
+                    
+                    const isCurrentUser = username === currentUsername;
                     
                     // Agregar a la lista lateral
                     const li = document.createElement('li');
                     li.innerHTML = `
                         <div style="display: flex; align-items: center;">
-                            <div style="width: 8px; height: 8px; background: #28a745; border-radius: 50%; margin-right: 8px;"></div>
-                            <span>${username}</span>
+                            <div style="width: 8px; height: 8px; background: ${isCurrentUser ? '#007bff' : '#28a745'}; border-radius: 50%; margin-right: 8px;"></div>
+                            <span>${username}${isCurrentUser ? ' (tú)' : ''}</span>
                         </div>
                     `;
-                    li.onclick = () => selectUser(username);
+                    if (!isCurrentUser) {
+                        li.onclick = () => selectUser(username);
+                    }
                     usersList.appendChild(li);
 
-                    // Agregar al selector
-                    const option = document.createElement('option');
-                    option.value = username;
-                    option.textContent = username;
-                    targetUserSelect.appendChild(option);
+                    // Agregar al selector (solo otros usuarios para chat privado)
+                    if (!isCurrentUser) {
+                        const option = document.createElement('option');
+                        option.value = username;
+                        option.textContent = username;
+                        targetUserSelect.appendChild(option);
+                    }
                 });
                 console.log('✅ Usuarios agregados a la lista y selector');
             }
