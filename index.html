@@ -411,8 +411,15 @@
 
             // Evento: usuario se une
             socket.on('user-joined', (data) => {
+                console.log('👤 USER-JOINED event:', data);
                 displaySystemMessage(data.message);
                 updateUsersList(data.allUsers || []);
+                
+                // Actualizar contador de usuarios en la sala si se proporciona
+                if (data.users) {
+                    updateRoomInfo(currentRoom, data.users);
+                    console.log('✅ Contador actualizado con users del evento');
+                }
                 
                 // Si el usuario que se unió no soy yo, mostrar notificación
                 if (data.username !== currentUsername) {
@@ -422,8 +429,15 @@
 
             // Evento: usuario abandona
             socket.on('user-left', (data) => {
+                console.log('👋 USER-LEFT event:', data);
                 displaySystemMessage(data.message);
                 updateUsersList(data.allUsers || []);
+                
+                // Actualizar contador de usuarios en la sala si se proporciona
+                if (data.users) {
+                    updateRoomInfo(currentRoom, data.users);
+                    console.log('✅ Contador actualizado con users del evento');
+                }
                 
                 // Si el usuario que abandonó estaba en chat privado, limpiar
                 if (selectedUser === data.username) {

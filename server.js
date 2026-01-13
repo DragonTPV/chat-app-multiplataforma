@@ -111,11 +111,12 @@ io.on('connection', (socket) => {
         messageHistory = rooms[roomName].messages || [];
       }
 
-      // Notificar a todos en la sala
+      // Notificar a todos en la sala (incluyendo lista actualizada de usuarios en la sala)
       socket.to(roomName).emit('user-joined', {
         username,
         message: `${username} se unió al chat`,
-        allUsers: onlineUsernames
+        allUsers: onlineUsernames,
+        users: rooms[roomName].users
       });
 
       // Enviar historial y lista de usuarios al usuario nuevo
@@ -262,11 +263,12 @@ io.on('connection', (socket) => {
         const onlineUsers = await db.getOnlineUsers();
         const onlineUsernames = onlineUsers.map(u => u.username);
 
-        // Notificar a otros usuarios
+        // Notificar a otros usuarios (con lista actualizada de usuarios en la sala)
         socket.to(roomName).emit('user-left', {
           username,
           message: `${username} abandonó el chat`,
-          allUsers: onlineUsernames
+          allUsers: onlineUsernames,
+          users: rooms[roomName].users
         });
 
         delete users[socket.id];
@@ -297,11 +299,12 @@ io.on('connection', (socket) => {
         const onlineUsers = await db.getOnlineUsers();
         const onlineUsernames = onlineUsers.map(u => u.username);
 
-        // Notificar a otros usuarios
+        // Notificar a otros usuarios (con lista actualizada de usuarios en la sala)
         socket.to(roomName).emit('user-left', {
           username,
           message: `${username} se desconectó`,
-          allUsers: onlineUsernames
+          allUsers: onlineUsernames,
+          users: rooms[roomName].users
         });
 
         delete users[socket.id];
