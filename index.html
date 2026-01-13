@@ -687,6 +687,8 @@
                     targetUserSelect.appendChild(option);
                 });
 
+            }
+
         }
 
         // Función para seleccionar usuario
@@ -968,6 +970,11 @@
         addContactBtn.addEventListener('click', showAddContactDialog);
 
         // Conectar automáticamente al cargar la página
+        window.addEventListener('load', () => {
+            if (!socket) {
+                connectToServer();
+            }
+        });
     </script>
 </body>
 </html>
