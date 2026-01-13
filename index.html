@@ -289,7 +289,10 @@
             <div class="chat-content">
                 <!-- Lista de usuarios -->
                 <div class="users-sidebar">
-                    <h3>Usuarios Conectados</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>Contactos</h3>
+                        <button id="add-contact-btn" style="background: #28a745; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 16px;">+</button>
+                    </div>
                     <ul id="users-list"></ul>
                 </div>
 
@@ -360,6 +363,14 @@
         let currentRoom = '';
         let selectedUser = '';
         let allUsers = new Set();
+
+        // Generar o obtener ID de dispositivo único
+        let deviceId = localStorage.getItem('chatDeviceId');
+        if (!deviceId) {
+            deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('chatDeviceId', deviceId);
+        }
+        console.log('📱 Device ID:', deviceId);
 
         // Función para conectar al servidor
         function connectToServer() {
