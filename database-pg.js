@@ -232,6 +232,7 @@ module.exports = {
     } catch (error) {
       throw error;
     }
+  },
 
   getContacts: async (userUsername) => {
     try {
@@ -252,5 +253,5 @@ module.exports = {
   // Cerrar conexión
   close: async () => {
     await pool.end();
-  }
+  },
 };
